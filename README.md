@@ -1,7 +1,6 @@
 # My API
 https://my-first-api1.onrender.com
 
-My First API.
 
 ## Tools Used: 
 * **Supabase** as my database
