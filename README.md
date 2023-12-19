@@ -1,47 +1,31 @@
-# HW-5
+# My API
 
 
-This assignment focuses on building a backend application using Dart. The application provides various endpoints to handle user account management and user profiles.
+My First API.
 
-## Notes: 
-* use **Supabase**
-* use best practices
+## Tools Used: 
+* **Supabase** as my database
+* **Render** as a host
 
 ## Endpoints
 
-### `/create-account` => POST
+### `auth/create-account` => POST
 
-Creates a new user account by providing the following information:
+Creates a new user account by providing his information:
 
-- `name`: The name of the user.
-- `email`: The email address of the user.
-- `password`: The password of the user.
 
-### `/login` => POST
+### `auth/login` => POST
 
 Logs in a user by providing authentication tokens:
 
-- `token`: The authentication token.
-- `refresh token`: The refresh token used for renewing authentication.
 
-  
-### `/profile` => GET
+### `user/profile` => GET
 
 Retrieves the user profile information:
 
-- `name`: The name of the user.
-- `email`: The email address of the user.
-- `bio`: The user's biography or description.
-
-### `/edit-profile` => POST
+### `user/edit-profile` => POST
 
 Updates the user profile with new information:
 
-- `name`: The updated name of the user.
-- `email`: The updated email address of the user.
-- `bio`: The updated biography or description of the user.
+### `user/delete-account` => DELETE
 
-
-### `/delete-account` => DELETE
-
-Delete the user account by his `email`.
