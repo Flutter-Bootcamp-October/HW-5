@@ -18,13 +18,12 @@ class UserRoute {
                 return Response.unauthorized("unauthorized, null value");
               }
               final token = req.headers["authorization"]?.split(" ")[1];
-              // final jwt = JWT.verify(
-              //     token!,
-              //     SecretKey(
-              //         "62dmGL0Csl7roArfUoW3w3Wo0/1zWJ60WElNYrPSoVBJcOox4r43Lcdc4auPxtoc6NHGN2w+3p9A8WrQ5fB04g=="));
+              final jwt = JWT.verify(
+                  token!,
+                  SecretKey(
+                      "62dmGL0Csl7roArfUoW3w3Wo0/1zWJ60WElNYrPSoVBJcOox4r43Lcdc4auPxtoc6NHGN2w+3p9A8WrQ5fB04g=="));
 
-              final user = await SupabaseClass.intense?.auth
-                  .getUser(token?.split(" ")[1]);
+              // final user = await SupabaseClass.intense?.auth.getUser(token);
 
               return innerHandler(req);
             } catch (e) {
