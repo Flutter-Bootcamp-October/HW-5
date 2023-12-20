@@ -1,16 +1,39 @@
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
-import '../handlers/user_route_handler.dart';
+import '../config/supabase.dart';
+import '../handlers/user_root_handler.dart';
 
 class UserRoute {
-  Router get route {
+  Handler get route {
     final appRoute = Router();
-    appRoute
-      ..post('/signup', signupUser)
-      ..post('/login', loginUser)
-      ..post('/profile', userProfile)
-      ..post('/delete_account', deleteAccount)
-      ..get('/get_profile', getUserProfile);
-    return appRoute;
+    appRoute.post('/profile', userProfile);
+
+    final handler = Pipeline()
+        .addMiddleware(
+          (innerHandler) => (Request req) async {
+            try {
+              if (req.headers["authorization"] == null) {
+                return Response.unauthorized("unauthorized, null value");
+              }
+              final token = req.headers["authorization"]?.split(" ")[1];
+              // final jwt = JWT.verify(
+              //     token!,
+              //     SecretKey(
+              //         "62dmGL0Csl7roArfUoW3w3Wo0/1zWJ60WElNYrPSoVBJcOox4r43Lcdc4auPxtoc6NHGN2w+3p9A8WrQ5fB04g=="));
+
+              final user = await SupabaseClass.intense?.auth
+                  .getUser(token?.split(" ")[1]);
+
+              return innerHandler(req);
+            } catch (e) {
+              return Response.unauthorized("unauthorized");
+            }
+          },
+        )
+        .addHandler(appRoute);
+
+    return handler;
   }
 }
