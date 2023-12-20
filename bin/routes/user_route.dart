@@ -1,6 +1,6 @@
 import 'package:shelf_router/shelf_router.dart';
 
-import '../handlers/user_root_handler.dart';
+import '../handlers/user_route_handler.dart';
 
 class UserRoute {
   Router get route {
