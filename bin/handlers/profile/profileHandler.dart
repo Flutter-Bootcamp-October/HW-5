@@ -10,7 +10,7 @@ Future<Response> getProfileHandler(Request req) async {
     final results =
         await RequestAuthHandlerUtils.fetchUserInfoByEmail(body["email"]);
     return Response.ok(json.encode(results));
-  } catch (e) {
-    return Response.internalServerError(body: "An error occurred: $e");
+  } catch (error) {
+    return RequestAuthHandlerUtils.handleErrors(error);
   }
 }

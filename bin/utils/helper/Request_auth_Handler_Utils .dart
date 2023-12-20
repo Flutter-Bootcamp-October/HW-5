@@ -10,7 +10,7 @@ class RequestAuthHandlerUtils {
     return json.decode(await req.readAsString());
   }
 
-////////////////////////////////////
+///////////////////////////////////
   static void checkBody({
     required List<String> keysCheck,
     required Map body,
@@ -31,7 +31,6 @@ class RequestAuthHandlerUtils {
   }
 
 ////////////////////////////
-//create And SignInUser
   static Future<AuthResponse> createAndSignInUser(
     Map body,
   ) async {
@@ -53,7 +52,6 @@ class RequestAuthHandlerUtils {
   }
 
 //////////////////////////////////////////////
-
   static Future<void> insertUserDetails(Map body) async {
     await supabase?.from('users').insert(body);
   }
@@ -80,7 +78,6 @@ class RequestAuthHandlerUtils {
     } else if (error is PostgrestException) {
       return Response.badRequest(body: _getPostgrestErrorMessage(error));
     } else {
-      // Log the error or handle unknown errors
       return Response.internalServerError(body: 'An unknown error occurred');
     }
   }
@@ -93,8 +90,6 @@ class RequestAuthHandlerUtils {
   }
 
   ///
-
-//signIn
   static Future<AuthResponse> signInUser(Map body) async {
     return await supabase!.auth
         .signInWithPassword(email: body["email"], password: body["password"]);
@@ -107,23 +102,17 @@ class RequestAuthHandlerUtils {
     return response ?? {};
   }
 
-//deleteUserAccount
   static Future<void> deleteUserAccount(String email) async {
-    // Fetch user UUID
     final userInfo = await fetchUserInfoByEmail(email);
     final uuid = userInfo['user_id'];
     if (uuid == null) {
       throw Exception('User not found for the provided email.');
     }
-
-    // Delete user from 'users' table
     await supabase?.from('users').delete().eq('email', email);
-
-    // Delete user from Supabase authentication system
     await supabase?.auth.admin.deleteUser(uuid);
   }
-  ////////////////
 
+  ////////////////
   static Future<void> updateUserInfo(
       String email, Map<String, dynamic> updates) async {
     await supabase?.from('users').update(updates).eq('email', email);
