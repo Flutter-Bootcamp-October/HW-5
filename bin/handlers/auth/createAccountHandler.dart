@@ -19,6 +19,7 @@ Future<Response> createAccountHandler(Request req) async {
         body: RequestAuthHandlerUtils.handleErrors(error));
   } catch (error) {
     print(error);
-    return Response.internalServerError(body: 'An unknown error occurred');
+    return Response.internalServerError(
+        body: 'An unknown error occurred test    ');
   }
 }
