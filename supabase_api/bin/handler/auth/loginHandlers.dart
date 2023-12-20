@@ -24,7 +24,10 @@ loginHandler(Request req) async {
           "refreshToken": user?.session?.refreshToken,
           "msg": "sucsess login",
         }),
-        headers: {"Content-Type": "application/json"});
+        headers: {
+          "Content-Type": "application/json",
+          // "token": user!.session!.accessToken,
+        });
   } on FormatException catch (error) {
     return Response.badRequest(body: error.message);
   } catch (error) {

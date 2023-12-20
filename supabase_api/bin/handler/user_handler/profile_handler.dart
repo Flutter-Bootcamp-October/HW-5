@@ -9,7 +9,7 @@ profileHandler(Request req) async {
     final supabase = SupabaseConfig.instant;
 
     //id, name, email, bio
-    final user_name = await supabase?.from("user").select("name");
+    final userName = await supabase?.from("users").select("name");
     final info = await supabase?.from("info").select("*");
     return Response.ok(json.encode({"info": info}),
         headers: {"Content-Type": "application/json"});

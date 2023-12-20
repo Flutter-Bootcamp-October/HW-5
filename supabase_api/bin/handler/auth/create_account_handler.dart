@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:shelf/shelf.dart';
 import 'package:supabase/supabase.dart';
 
@@ -10,26 +9,40 @@ createAccountHandler(Request req) async {
     final Map body = json.decode(await req.readAsString());
     final supabase = SupabaseConfig.instant;
 
-    List<String> keyNames = ["name", "email", "password"];
+    List<String> keyNames = ["email", "password", "name"];
     checkBody(
         keyMap: keyNames,
         body: body,
         errorMsg: "body must have name, email, and password");
 
-    await supabase?.auth.admin.createUser(AdminUserAttributes(
-        data: {"name": body["name"]},
-        email: body["email"],
-        password: body["password"],
-        emailConfirm: true));
+    await supabase?.auth.admin
+        .createUser(AdminUserAttributes(
+            email: body["email"],
+            password: body["password"],
+            emailConfirm: true))
+        .then((value) async {
+      try {
+        body.remove("password");
+        print(body);
+        await supabase.from("users").insert(body);
+      } catch (e) {
+        throw FormatException(e.toString());
+      }
+    });
 
-    body.remove("password");
-    await supabase?.from("users").insert(body);
     return Response.ok(json.encode({"message": "user created succesfuly"}),
         headers: {"Content-Type": "application/json"});
   } on FormatException catch (error) {
     return Response.badRequest(body: error.message);
   } on AuthException catch (error) {
-    return Response.badRequest(body: error.message);
+    return Response(int.parse(error.statusCode.toString()),
+        body: error.message);
+  } on PostgrestException catch (error) {
+    String msgError = '';
+    if (error.code == "PGRST204") {
+      msgError = "there is error with password";
+    }
+    return Response.badRequest(body: msgError);
   } catch (error) {
     return Response.badRequest(body: error.toString());
   }
