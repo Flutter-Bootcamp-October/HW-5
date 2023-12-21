@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:supabase/supabase.dart';
 
 class SupaBaseIntegration {
@@ -21,6 +23,11 @@ class SupaBaseIntegration {
         .eq('user_id', user.user!.id);
   }
 
+  Future<List<Map<String, dynamic>>> getFromPublicTable(
+      {required String tableName}) async {
+    return await subaInstance.from(tableName).select();
+  }
+
   void updateFromTable(
       {required String tableName,
       required Map<String, dynamic> body,
@@ -33,5 +40,34 @@ class SupaBaseIntegration {
     await subaInstance.from('profile').delete().eq('user_id', user.user!.id);
     await subaInstance.from('users').delete().eq('user_id', user.user!.id);
     await subaInstance.auth.admin.deleteUser(user.user!.id);
+  }
+
+  void uploadUserAvatar(
+      {required UserResponse user,
+      required String bucket,
+      required String path,
+      required String extension,
+      required Map<String, dynamic> body}) async {
+    final avatars = await subaInstance.storage.from('images').list(path: path);
+
+    for (var avatar in avatars) {
+      if (avatar.name.startsWith(user.user!.id)) {
+        await subaInstance.storage
+            .from(bucket)
+            .remove(["$user/${user.user!.id}"]);
+      }
+
+      final newAvatarPath =
+          "/$path/${user.user!.id}-${DateTime.now()}.$extension";
+
+      await subaInstance.storage.from(bucket).uploadBinary(
+          newAvatarPath, Uint8List.fromList(List.from(body['image'])));
+
+      final avatarURL =
+          subaInstance.storage.from(bucket).getPublicUrl(newAvatarPath);
+
+      updateFromTable(
+          body: {'image': avatarURL}, tableName: 'profile', user: user);
+    }
   }
 }

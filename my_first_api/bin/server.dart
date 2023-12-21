@@ -3,7 +3,7 @@ import 'package:shelf/shelf_io.dart';
 import 'config/supabase.dart';
 import 'routes/main_route.dart';
 
-// import 'package:shelf_hotreload/shelf_hotreload.dart';
+import 'package:shelf_hotreload/shelf_hotreload.dart';
 
 void main(List<String> args) async {
   // withHotreload(
@@ -24,6 +24,6 @@ Future<HttpServer> createServer() async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
 
   final server = await serve(MainRoute().route, ip, port);
-  // print('Server listening on port ${server.port}');
+  print('Server listening on port ${server.port}');
   return server;
 }
